@@ -3,10 +3,12 @@
 import React, { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { fetchApi } from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 import { PlusCircle, Image, Sparkles, CheckCircle2, ArrowRight } from 'lucide-react';
 
 export default function AddRoadmapPage() {
   const router = useRouter();
+  const { user } = useAuth();
   const [title, setTitle] = useState('');
   const [shortDescription, setShortDescription] = useState('');
   const [fullDescription, setFullDescription] = useState('');
@@ -35,7 +37,9 @@ export default function AddRoadmapPage() {
           duration,
           category,
           skills: skills.split(',').map(s => s.trim()),
-          imageUrl
+          imageUrl,
+          creatorId: user?.id || 'demo-user-123',
+          creatorName: user?.name || 'Developer'
         })
       });
 

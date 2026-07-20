@@ -3,16 +3,19 @@
 import React, { useState, useEffect } from 'react';
 import Link from 'next/link';
 import { fetchApi } from '@/lib/api';
-import { Layers, Eye, Trash2, Plus, ExternalLink } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { Layers, Eye, Trash2, Plus } from 'lucide-react';
 
 export default function ManageRoadmapsPage() {
+  const { user } = useAuth();
   const [roadmaps, setRoadmaps] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
 
   const loadRoadmaps = async () => {
     setLoading(true);
     try {
-      const res = await fetchApi('/roadmaps?limit=20');
+      const creatorId = user?.id || 'demo-user-123';
+      const res = await fetchApi(`/roadmaps?creatorId=${creatorId}&limit=20`);
       if (res.success && res.data) {
         setRoadmaps(res.data);
       }
@@ -25,7 +28,7 @@ export default function ManageRoadmapsPage() {
 
   useEffect(() => {
     loadRoadmaps();
-  }, []);
+  }, [user]);
 
   const handleDelete = async (id: string) => {
     if (!confirm('Are you sure you want to delete this roadmap?')) return;
@@ -44,9 +47,9 @@ export default function ManageRoadmapsPage() {
       <div className="flex items-center justify-between">
         <div className="space-y-1">
           <h1 className="text-2xl font-bold text-slate-900 dark:text-white flex items-center gap-2">
-            <Layers className="w-6 h-6 text-purple-500" /> Manage Roadmaps
+            <Layers className="w-6 h-6 text-purple-500" /> My Created Roadmaps
           </h1>
-          <p className="text-xs text-slate-500">View, preview, or remove roadmaps from the system.</p>
+          <p className="text-xs text-slate-500">Manage learning roadmaps published by your account.</p>
         </div>
 
         <Link
@@ -60,9 +63,17 @@ export default function ManageRoadmapsPage() {
       {/* Table Container */}
       <div className="glass-card overflow-hidden border border-slate-200 dark:border-slate-800">
         {loading ? (
-          <div className="p-8 text-center text-xs text-slate-400">Loading roadmap management table...</div>
+          <div className="p-8 text-center text-xs text-slate-400">Loading your roadmaps...</div>
         ) : roadmaps.length === 0 ? (
-          <div className="p-12 text-center text-xs text-slate-400">No roadmaps found. Create one above!</div>
+          <div className="p-12 text-center text-xs text-slate-400 space-y-3">
+            <p>You haven't created any custom roadmaps yet.</p>
+            <Link
+              href="/dashboard/add-roadmap"
+              className="inline-block px-4 py-2 rounded-xl text-xs font-semibold bg-blue-600 text-white"
+            >
+              Create Your First Roadmap
+            </Link>
+          </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-left text-xs">

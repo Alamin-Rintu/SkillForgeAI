@@ -4,9 +4,11 @@ import React, { useState, useEffect } from 'react';
 import RoadmapCard, { RoadmapCardProps } from '@/components/RoadmapCard';
 import SkeletonCard from '@/components/SkeletonCard';
 import { fetchApi } from '@/lib/api';
-import { Bookmark, Sparkles } from 'lucide-react';
+import { useAuth } from '@/context/AuthContext';
+import { Bookmark } from 'lucide-react';
 
 export default function SavedRoadmapsPage() {
+  const { user } = useAuth();
   const [savedRoadmaps, setSavedRoadmaps] = useState<RoadmapCardProps[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -14,7 +16,8 @@ export default function SavedRoadmapsPage() {
     async function loadSaved() {
       setLoading(true);
       try {
-        const res = await fetchApi('/roadmaps/saved');
+        const userId = user?.id || 'demo-user-123';
+        const res = await fetchApi(`/roadmaps/saved?userId=${userId}`);
         if (res.success && res.data) {
           setSavedRoadmaps(res.data);
         }
@@ -25,7 +28,7 @@ export default function SavedRoadmapsPage() {
       }
     }
     loadSaved();
-  }, []);
+  }, [user]);
 
   return (
     <div className="space-y-6">
