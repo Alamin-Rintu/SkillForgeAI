@@ -5,6 +5,7 @@ import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import RoadmapCard from '@/components/RoadmapCard';
 import { fetchApi } from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 import {
   Star,
   Clock,
@@ -16,7 +17,8 @@ import {
   Bookmark,
   Share2,
   ArrowLeft,
-  ChevronDown
+  ChevronDown,
+  Check
 } from 'lucide-react';
 import Link from 'next/link';
 
@@ -62,12 +64,17 @@ interface RoadmapDetail {
 export default function RoadmapDetailPage({ params }: { params: Promise<{ id: string }> }) {
   const resolvedParams = use(params);
   const id = resolvedParams.id;
+  const { user } = useAuth();
 
   const [roadmap, setRoadmap] = useState<RoadmapDetail | null>(null);
   const [reviews, setReviews] = useState<ReviewItem[]>([]);
   const [related, setRelated] = useState<any[]>([]);
   const [loading, setLoading] = useState(true);
   const [activeTopic, setActiveTopic] = useState<number | null>(0);
+
+  // Saved Bookmark State
+  const [isSaved, setIsSaved] = useState(false);
+  const [savingBookmark, setSavingBookmark] = useState(false);
 
   // Review Form
   const [newRating, setNewRating] = useState(5);
@@ -78,10 +85,18 @@ export default function RoadmapDetailPage({ params }: { params: Promise<{ id: st
     async function loadDetail() {
       setLoading(true);
       try {
+        const userId = user?.id || 'demo-user-123';
         const res = await fetchApi(`/roadmaps/${id}`);
         if (res.success && res.data) {
           setRoadmap(res.data);
           setReviews(res.reviews || []);
+        }
+
+        // Check if bookmarked
+        const savedRes = await fetchApi(`/roadmaps/saved?userId=${userId}`);
+        if (savedRes.success && savedRes.data) {
+          const bookmarked = savedRes.data.some((item: any) => item._id === id || item._id === res.data?._id);
+          setIsSaved(bookmarked);
         }
 
         // Load related roadmaps
@@ -96,7 +111,26 @@ export default function RoadmapDetailPage({ params }: { params: Promise<{ id: st
       }
     }
     loadDetail();
-  }, [id]);
+  }, [id, user]);
+
+  const handleToggleSave = async () => {
+    setSavingBookmark(true);
+    try {
+      const userId = user?.id || 'demo-user-123';
+      const roadmapIdToSave = roadmap?._id || id;
+      const res = await fetchApi('/roadmaps/save', {
+        method: 'POST',
+        body: JSON.stringify({ roadmapId: roadmapIdToSave, userId })
+      });
+      if (res.success) {
+        setIsSaved(res.isSaved);
+      }
+    } catch (err) {
+      console.error(err);
+    } finally {
+      setSavingBookmark(false);
+    }
+  };
 
   const handleReviewSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -105,7 +139,7 @@ export default function RoadmapDetailPage({ params }: { params: Promise<{ id: st
 
     const mockReview: ReviewItem = {
       _id: Date.now().toString(),
-      userName: 'Current User',
+      userName: user?.name || 'Current User',
       userAvatar: 'https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?w=150&auto=format&fit=crop&q=80',
       rating: newRating,
       comment: newComment,
@@ -157,9 +191,24 @@ export default function RoadmapDetailPage({ params }: { params: Promise<{ id: st
           <img src={roadmap.imageUrl} alt={roadmap.title} className="w-full h-full object-cover blur-md" />
         </div>
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 relative z-10 space-y-6">
-          <Link href="/explore" className="inline-flex items-center gap-2 text-xs font-semibold text-cyan-400 hover:text-cyan-300">
-            <ArrowLeft className="w-4 h-4" /> Back to Explore
-          </Link>
+          <div className="flex items-center justify-between">
+            <Link href="/explore" className="inline-flex items-center gap-2 text-xs font-semibold text-cyan-400 hover:text-cyan-300">
+              <ArrowLeft className="w-4 h-4" /> Back to Explore
+            </Link>
+
+            <button
+              onClick={handleToggleSave}
+              disabled={savingBookmark}
+              className={`px-4 py-2 rounded-xl text-xs font-bold transition-all flex items-center gap-2 border ${
+                isSaved
+                  ? 'bg-amber-500 text-white border-amber-400 shadow-lg shadow-amber-500/20'
+                  : 'bg-slate-800/80 text-white border-slate-700 hover:bg-slate-700'
+              }`}
+            >
+              {isSaved ? <Check className="w-4 h-4" /> : <Bookmark className="w-4 h-4" />}
+              {isSaved ? 'Saved in Collection' : 'Save Roadmap'}
+            </button>
+          </div>
 
           <div className="flex flex-wrap items-center gap-3 text-xs">
             <span className="px-3 py-1 rounded-full font-bold bg-blue-600 text-white">

@@ -3,9 +3,10 @@
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
 import StatCard from '@/components/StatCard';
+import RoadmapCard, { RoadmapCardProps } from '@/components/RoadmapCard';
 import { useAuth } from '@/context/AuthContext';
 import { fetchApi } from '@/lib/api';
-import { Target, Bookmark, Sparkles, FileCheck, Bot, Layers } from 'lucide-react';
+import { Target, Bookmark, Sparkles, FileCheck, Bot, Layers, ArrowRight } from 'lucide-react';
 
 export default function DashboardOverviewPage() {
   const { user } = useAuth();
@@ -15,15 +16,25 @@ export default function DashboardOverviewPage() {
     resumeScore: 'N/A',
     interviewCount: 1
   });
+  const [recentSaved, setRecentSaved] = useState<RoadmapCardProps[]>([]);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadUserStats() {
-      if (!user) return;
+    async function loadDashboardData() {
+      setLoading(true);
       try {
-        const res = await fetchApi(`/analytics/user-stats?userId=${user.id}`);
-        if (res.success && res.data) {
-          setStats(res.data);
+        const userId = user?.id || 'demo-user-123';
+        
+        // Fetch user stats
+        const statsRes = await fetchApi(`/analytics/user-stats?userId=${userId}`);
+        if (statsRes.success && statsRes.data) {
+          setStats(statsRes.data);
+        }
+
+        // Fetch recent saved roadmaps
+        const savedRes = await fetchApi(`/roadmaps/saved?userId=${userId}`);
+        if (savedRes.success && savedRes.data) {
+          setRecentSaved(savedRes.data.slice(0, 3));
         }
       } catch (e) {
         console.error(e);
@@ -31,7 +42,8 @@ export default function DashboardOverviewPage() {
         setLoading(false);
       }
     }
-    loadUserStats();
+
+    loadDashboardData();
   }, [user]);
 
   return (
@@ -86,6 +98,33 @@ export default function DashboardOverviewPage() {
             <p className="text-xs text-slate-500">Practice coding and system design with conversational feedback.</p>
           </Link>
         </div>
+      </div>
+
+      {/* Recent Saved Roadmaps Preview */}
+      <div className="space-y-4 pt-2">
+        <div className="flex items-center justify-between">
+          <h2 className="text-lg font-bold text-slate-900 dark:text-white flex items-center gap-2">
+            <Bookmark className="w-5 h-5 text-purple-500" /> Recent Saved Roadmaps
+          </h2>
+          <Link href="/dashboard/saved" className="text-xs font-semibold text-blue-600 dark:text-cyan-400 hover:underline flex items-center gap-1">
+            View All Saved ({stats.savedCount}) <ArrowRight className="w-3.5 h-3.5" />
+          </Link>
+        </div>
+
+        {recentSaved.length === 0 ? (
+          <div className="glass-card p-8 text-center space-y-2 border border-dashed border-slate-300 dark:border-slate-800">
+            <p className="text-xs text-slate-500">You haven't bookmarked any learning roadmaps yet.</p>
+            <Link href="/explore" className="inline-block text-xs font-bold text-blue-600 dark:text-cyan-400 hover:underline">
+              Explore Available Roadmaps &rarr;
+            </Link>
+          </div>
+        ) : (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+            {recentSaved.map((rm) => (
+              <RoadmapCard key={rm._id} {...rm} isSavedInitial={true} />
+            ))}
+          </div>
+        )}
       </div>
 
     </div>

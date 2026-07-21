@@ -4,10 +4,12 @@ import React, { useState } from 'react';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import { fetchApi } from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 import { Sparkles, Calendar, Clock, BookOpen, CheckCircle, RefreshCw, ArrowRight, Save } from 'lucide-react';
 import confetti from 'canvas-confetti';
 
 export default function AIRoadmapGeneratorPage() {
+  const { user } = useAuth();
   const [skillLevel, setSkillLevel] = useState('Intermediate');
   const [targetJob, setTargetJob] = useState('Full Stack Engineer');
   const [availableTime, setAvailableTime] = useState('15 Hours / Week');
@@ -49,7 +51,9 @@ export default function AIRoadmapGeneratorPage() {
   const handleSaveToMyRoadmaps = async () => {
     if (!result) return;
     try {
-      await fetchApi('/roadmaps', {
+      const creatorId = user?.id || 'demo-user-123';
+      const creatorName = user?.name || 'Developer';
+      const res = await fetchApi('/roadmaps', {
         method: 'POST',
         body: JSON.stringify({
           title: result.title,
@@ -59,9 +63,20 @@ export default function AIRoadmapGeneratorPage() {
           duration: result.estimatedCompletionTime,
           category: 'AI Personalized',
           skills: languages.split(',').map(s => s.trim()),
-          imageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80'
+          imageUrl: 'https://images.unsplash.com/photo-1555066931-4365d14bab8c?w=800&auto=format&fit=crop&q=80',
+          creatorId,
+          creatorName
         })
       });
+
+      if (res.success && res.data?._id) {
+        // Auto-bookmark to user's saved collection as well
+        await fetchApi('/roadmaps/save', {
+          method: 'POST',
+          body: JSON.stringify({ roadmapId: res.data._id, userId: creatorId })
+        });
+      }
+
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
     } catch (e) {

@@ -30,6 +30,12 @@ export default function SavedRoadmapsPage() {
     loadSaved();
   }, [user]);
 
+  const handleSaveToggle = (isSaved: boolean, id: string) => {
+    if (!isSaved) {
+      setSavedRoadmaps((prev) => prev.filter((rm) => rm._id !== id));
+    }
+  };
+
   return (
     <div className="space-y-6">
       <div className="space-y-1">
@@ -56,7 +62,7 @@ export default function SavedRoadmapsPage() {
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {savedRoadmaps.map((rm) => (
-            <RoadmapCard key={rm._id} {...rm} isSavedInitial={true} />
+            <RoadmapCard key={rm._id} {...rm} isSavedInitial={true} onSaveToggle={handleSaveToggle} />
           ))}
         </div>
       )}

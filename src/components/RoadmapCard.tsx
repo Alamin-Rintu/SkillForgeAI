@@ -4,6 +4,7 @@ import React, { useState } from 'react';
 import Link from 'next/link';
 import { Star, Clock, Award, Bookmark, ArrowRight, Check } from 'lucide-react';
 import { fetchApi } from '@/lib/api';
+import { useAuth } from '@/context/AuthContext';
 
 export interface RoadmapCardProps {
   _id: string;
@@ -17,6 +18,7 @@ export interface RoadmapCardProps {
   rating: number;
   ratingCount?: number;
   isSavedInitial?: boolean;
+  onSaveToggle?: (isSaved: boolean, id: string) => void;
 }
 
 export default function RoadmapCard({
@@ -31,7 +33,9 @@ export default function RoadmapCard({
   rating,
   ratingCount = 120,
   isSavedInitial = false,
+  onSaveToggle,
 }: RoadmapCardProps) {
+  const { user } = useAuth();
   const [saved, setSaved] = useState(isSavedInitial);
   const [saving, setSaving] = useState(false);
 
@@ -39,13 +43,17 @@ export default function RoadmapCard({
     e.preventDefault();
     e.stopPropagation();
     setSaving(true);
+    const userId = user?.id || 'demo-user-123';
     try {
       const res = await fetchApi('/roadmaps/save', {
         method: 'POST',
-        body: JSON.stringify({ roadmapId: _id })
+        body: JSON.stringify({ roadmapId: _id, userId })
       });
       if (res.success) {
         setSaved(res.isSaved);
+        if (onSaveToggle) {
+          onSaveToggle(res.isSaved, _id);
+        }
       } else {
         setSaved(!saved);
       }
