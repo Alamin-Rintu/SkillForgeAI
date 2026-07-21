@@ -130,13 +130,13 @@ export default function RoadmapCard({
             {skills.slice(0, 3).map((skill, idx) => (
               <span
                 key={idx}
-                className="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-200 dark:border-slate-700/60"
+                className="px-2.5 py-1 text-[11px] font-semibold rounded-md bg-slate-200/80 dark:bg-slate-800 text-slate-800 dark:text-slate-200 border border-slate-300/60 dark:border-slate-700/60"
               >
                 {skill}
               </span>
             ))}
             {skills.length > 3 && (
-              <span className="px-2 py-0.5 text-[11px] font-medium rounded-md bg-slate-100 dark:bg-slate-800 text-slate-500">
+              <span className="px-2.5 py-1 text-[11px] font-semibold rounded-md bg-slate-200/80 dark:bg-slate-800 text-slate-700 dark:text-slate-300 border border-slate-300/60 dark:border-slate-700/60">
                 +{skills.length - 3}
               </span>
             )}

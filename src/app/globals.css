@@ -39,49 +39,24 @@ h1, h2, h3, h4, h5, h6 {
   transition: color 0.3s ease;
 }
 
-.dark h1, 
-.dark h2, 
-.dark h3, 
-.dark h4, 
-.dark h5, 
-.dark h6 {
-  color: #ffffff !important;
-}
-
-/* Dark Mode Typography & Input High-Contrast Overrides */
+/* Crisp dark mode typography & inputs */
 .dark label {
-  color: #cbd5e1 !important;
-}
-
-.dark p.text-slate-500,
-.dark span.text-slate-500 {
-  color: #94a3b8 !important;
-}
-
-.dark p.text-slate-600,
-.dark span.text-slate-600 {
-  color: #cbd5e1 !important;
-}
-
-.dark p.text-slate-700,
-.dark span.text-slate-700,
-.dark div.text-slate-700 {
-  color: #e2e8f0 !important;
+  color: #cbd5e1;
 }
 
 .dark select {
-  background-color: #1e293b !important;
-  color: #f8fafc !important;
+  background-color: #1e293b;
+  color: #f8fafc;
 }
 
 .dark option {
-  background-color: #0f172a !important;
-  color: #f8fafc !important;
+  background-color: #0f172a;
+  color: #f8fafc;
 }
 
 .dark input::placeholder,
 .dark textarea::placeholder {
-  color: #64748b !important;
+  color: #64748b;
 }
 
 /* Preserve gradient text override */

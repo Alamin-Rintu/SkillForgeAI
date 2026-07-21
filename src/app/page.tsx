@@ -485,9 +485,9 @@ export default function Home() {
               <div key={idx} className="glass-card overflow-hidden">
                 <button
                   onClick={() => setOpenFaq(openFaq === idx ? null : idx)}
-                  className="w-full p-5 text-left font-bold text-slate-900 dark:text-white flex items-center justify-between"
+                  className="w-full p-5 text-left font-bold text-slate-900 dark:text-white flex items-center justify-between hover:text-blue-600 dark:hover:text-cyan-400 transition-colors"
                 >
-                  <span>{item.q}</span>
+                  <span className="text-slate-900 dark:text-white text-sm sm:text-base font-bold">{item.q}</span>
                   <ChevronDown className={`w-5 h-5 text-blue-500 transition-transform ${openFaq === idx ? 'rotate-180' : ''}`} />
                 </button>
                 {openFaq === idx && (
