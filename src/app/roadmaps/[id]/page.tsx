@@ -172,7 +172,7 @@ export default function RoadmapDetailPage({ params }: { params: Promise<{ id: st
               <Clock className="w-3.5 h-3.5 text-cyan-400" /> {roadmap.duration}
             </span>
             <span className="flex items-center gap-1 text-amber-400 font-bold">
-              <Star className="w-3.5 h-3.5 fill-amber-400" /> {roadmap.rating.toFixed(1)} ({roadmap.ratingCount} reviews)
+              <Star className="w-3.5 h-3.5 fill-amber-400" /> {roadmap.rating ? Number(roadmap.rating).toFixed(1) : '4.9'} ({roadmap.ratingCount || 0} reviews)
             </span>
           </div>
 
