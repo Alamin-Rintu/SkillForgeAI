@@ -1,5 +1,9 @@
 # 🚀 SkillForge AI — AI-Powered Tech Career & Roadmap Platform
 
+[![Live Application](https://img.shields.io/badge/Live%20Demo-Vercel-blue?style=for-the-badge&logo=vercel)](https://skill-forge-ai-ivory-gamma.vercel.app/)
+
+**🌐 Live Website**: [https://skill-forge-ai-ivory-gamma.vercel.app/](https://skill-forge-ai-ivory-gamma.vercel.app/)
+
 SkillForge AI is a modern, production-ready full-stack SaaS web application designed to empower students, software engineers, and job seekers. It features personalized AI learning roadmaps, instant ATS resume scoring, AI career recommendations, and interactive conversational interview practice powered by the **Google Gemini API**.
 
 ---
