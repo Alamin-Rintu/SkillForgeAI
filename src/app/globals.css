@@ -48,6 +48,42 @@ h1, h2, h3, h4, h5, h6 {
   color: #ffffff !important;
 }
 
+/* Dark Mode Typography & Input High-Contrast Overrides */
+.dark label {
+  color: #cbd5e1 !important;
+}
+
+.dark p.text-slate-500,
+.dark span.text-slate-500 {
+  color: #94a3b8 !important;
+}
+
+.dark p.text-slate-600,
+.dark span.text-slate-600 {
+  color: #cbd5e1 !important;
+}
+
+.dark p.text-slate-700,
+.dark span.text-slate-700,
+.dark div.text-slate-700 {
+  color: #e2e8f0 !important;
+}
+
+.dark select {
+  background-color: #1e293b !important;
+  color: #f8fafc !important;
+}
+
+.dark option {
+  background-color: #0f172a !important;
+  color: #f8fafc !important;
+}
+
+.dark input::placeholder,
+.dark textarea::placeholder {
+  color: #64748b !important;
+}
+
 /* Preserve gradient text override */
 .gradient-text,
 .dark .gradient-text,

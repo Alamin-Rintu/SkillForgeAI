@@ -67,7 +67,7 @@ export default function LoginPage() {
 
       <main className="flex-1 flex items-center justify-center p-4 py-12 relative">
         <div className="w-full max-w-md glass-card p-8 space-y-6 relative z-10 border border-slate-200 dark:border-slate-800">
-          
+
           <div className="text-center space-y-2">
             <div className="w-12 h-12 rounded-2xl bg-gradient-to-tr from-blue-600 via-purple-600 to-cyan-500 p-0.5 mx-auto">
               <div className="w-full h-full bg-slate-900 rounded-[14px] flex items-center justify-center">
@@ -120,7 +120,7 @@ export default function LoginPage() {
               disabled={loading}
               className="w-full py-3 text-xs font-bold gradient-btn rounded-xl flex items-center justify-center gap-2"
             >
-              <LogIn className="w-4 h-4" /> {loading ? 'Authenticating...' : 'Sign In with Better Auth'}
+              <LogIn className="w-4 h-4" /> {loading ? 'Authenticating...' : 'Sign In'}
             </button>
           </form>
 
